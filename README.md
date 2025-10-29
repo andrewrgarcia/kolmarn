@@ -1,9 +1,15 @@
 <p align="center">
-<img width="300" alt="kolmarn" src="https://github.com/user-attachments/assets/566667a1-4da5-4437-b60a-2af7086f9db8" />
+  <img width="300" alt="kolmarn" src="https://github.com/user-attachments/assets/566667a1-4da5-4437-b60a-2af7086f9db8" />
 </p>
 <h1 align="center">KOLMARN</h1>
 <p align="center">
-Clean and interpretable implementation of Kolmogorov-Arnold Networks (KANs).
+  Clean and interpretable implementation of Kolmogorov-Arnold Networks (KANs).
+</p>
+<p align="center"><em>Kolmogorov–Arnold Networks, reimagined for clarity.</em></p>
+
+<p align="center">
+  <a href="https://pypi.org/project/kolmarn/"><img src="https://img.shields.io/pypi/v/kolmarn?color=blue&label=PyPI&style=flat-square"></a>
+  <a href="https://github.com/andrewrgarcia/kolmarn/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat-square"></a>
 </p>
 
 
@@ -43,7 +49,7 @@ pip install kolmarn
 ### Local development:
 
 ```bash
-git clone https://github.com/YOURNAME/kolmarn.git
+git clone https://github.com/andrewrgarcia/kolmarn.git
 cd kolmarn
 pip install -e .
 ```
@@ -175,6 +181,22 @@ Planned enhancements include:
 * Visualization of knot movement
 * Symbolic extraction of spline equations
 * Domain-specific examples (econometrics, risk models)
+
+---
+
+
+## Citation
+
+If you use **Kolmarn** in academic work, please cite it as:
+
+```bibtex
+@software{kolmarn,
+  author = {Garcia, Andrew R.},
+  title = {Kolmarn: Clean and Interpretable Kolmogorov–Arnold Networks},
+  year = {2025},
+  url = {https://github.com/andrewrgarcia/kolmarn}
+}
+```
 
 ---
 
