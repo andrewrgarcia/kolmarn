@@ -24,7 +24,7 @@ def plot_feature_splines(model, feature_index=0, layer_index=0, num_points=200):
 
     fig, axs = plt.subplots(
         N, N, figsize=(3*N, 3*N),
-        constrained_layout=True  # ✅ clean spacing
+        constrained_layout=True  # clean spacing
     )
     axs = axs.flatten()
 
@@ -47,7 +47,7 @@ def plot_feature_splines(model, feature_index=0, layer_index=0, num_points=200):
             ax.set_xlim(0, 1)
             ax.grid(alpha=0.20, linestyle="--", linewidth=0.5)
 
-            # ✅ Only show labels on leftmost + bottom row to avoid clutter
+            # Only show labels on leftmost + bottom row to avoid clutter
             row = i // N
             col = i % N
             if col != 0:
@@ -57,7 +57,7 @@ def plot_feature_splines(model, feature_index=0, layer_index=0, num_points=200):
         else:
             ax.axis("off")
 
-    # ✅ Shared axis labels without overlap
+    # Shared axis labels without overlap
     fig.supxlabel("Input (Normalized)", fontsize=12)
     fig.supylabel("Spline Output", fontsize=12)
 

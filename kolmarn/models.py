@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from kan.layers import KANLayer
+from kolmarn.layers import KANLayer
 
 
 class KANSequential(nn.Module):

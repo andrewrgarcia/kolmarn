@@ -4,7 +4,7 @@ from examples.train_sin import (
     train_models,
     performance_metrics,
 )
-from kan.models import KANSequential
+from kolmarn.models import KANSequential
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error

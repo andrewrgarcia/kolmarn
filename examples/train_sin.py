@@ -3,7 +3,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-from kan.regularizers import spline_smoothness_penalty
+from kolmarn.regularizers import spline_smoothness_penalty
 
 def data_generation():
     N = 200
@@ -77,7 +77,7 @@ def performance_metrics(test_data):
 
 
 if __name__ == "__main__":
-    from kan.models import KANSequential
+    from kolmarn.models import KANSequential
 
     kan = KANSequential(1, [32, 1], num_basis=16)
     mlp = nn.Sequential(

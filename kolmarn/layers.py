@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from kan.spline import BSplineBasis, RBFBasis
+from kolmarn.spline import BSplineBasis, RBFBasis
 
 
 class KANLayer(nn.Module):

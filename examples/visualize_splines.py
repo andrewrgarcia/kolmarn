@@ -1,5 +1,5 @@
-from kan.models import KANSequential
-from kan.visualize import plot_feature_splines
+from kolmarn.models import KANSequential
+from kolmarn.visualize import plot_feature_splines
 
 model = KANSequential(1, [32, 1], num_basis=16)
 
