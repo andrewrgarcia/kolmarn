@@ -1,0 +1,19 @@
+[project]
+name = "kolmarn"
+version = "0.1.0"
+description = "Kolmogorov-Arnold Network (KAN) — smooth interpretable neural networks"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+  { name = "Andrew Garcia" }
+]
+dependencies = [
+  "torch>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
