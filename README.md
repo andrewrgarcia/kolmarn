@@ -1,6 +1,11 @@
-# Kolmarn 
-
+<p align="center">
+<img width="300" alt="kolmarn" src="https://github.com/user-attachments/assets/566667a1-4da5-4437-b60a-2af7086f9db8" />
+</p>
+<h1 align="center">KOLMARN</h1>
+<p align="center">
 Clean and interpretable implementation of Kolmogorov-Arnold Networks (KANs).
+</p>
+
 
 **K**olm**a**r**n** provides smooth univariate spline layers with visualization and regularization tools designed for scientific machine learning, forecasting, and high-stakes decision applications.
 
