@@ -103,7 +103,7 @@ Example output: learned univariate spline functions per hidden unit in a layer.
 
 Repeated regression experiments on `sin(2πx)` (100 independent trials, equal parameter counts):
 
-| Metric | KolmArn (mean ± std) | MLP (mean ± std) |
+| Metric | KAN (mean ± std) | MLP (mean ± std) |
 |-------|---------------------:|----------------:|
 | RMSE  | 0.0167 ± 0.0079       | 0.0185 ± 0.0095 |
 | MAE   | 0.0133 ± 0.0079       | 0.0148 ± 0.0078 |
