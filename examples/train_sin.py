@@ -15,7 +15,7 @@ def data_generation():
     return (x, y), (x_test, y_true)
 
 
-def train_models(data):
+def train_models(kan, mlp, data):
     x, y = data
     opt_kan = torch.optim.Adam(kan.parameters(), lr=1e-2)
     opt_mlp = torch.optim.Adam(mlp.parameters(), lr=1e-2)
@@ -86,6 +86,6 @@ if __name__ == "__main__":
     )
 
     data, test_data = data_generation()
-    train_models(data)
+    train_models(kan, mlp, data)
     visualize_plot(data, test_data)
     performance_metrics(test_data)
