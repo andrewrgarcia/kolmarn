@@ -29,7 +29,13 @@ This makes KolmArn well-suited for:
 
 ## Installation
 
-Local development:
+### From PyPI (recommended)
+
+```bash
+pip install kolmarn
+```
+
+### Local development:
 
 ```bash
 git clone https://github.com/YOURNAME/kolmarn.git
