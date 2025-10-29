@@ -1,15 +1,22 @@
 import torch
 import torch.nn as nn
-from kan.spline import BSplineBasis
+from kan.spline import BSplineBasis, RBFBasis
 
 
 class KANLayer(nn.Module):
-    """Kolmogorov-Arnold layer with spline basis expansion."""
-    def __init__(self, in_features, out_features, num_basis=10,
-                 knots_trainable=False):
+    """Kolmogorov-Arnold layer with configurable basis type."""
+    def __init__(self, in_features, out_features,
+                 num_basis=10, knots_trainable=False,
+                 basis="kan_spline"):
         super().__init__()
 
-        self.basis = BSplineBasis(num_basis, knots_trainable)
+        if basis == "kan_spline":
+            self.basis = BSplineBasis(num_basis, knots_trainable)
+        elif basis == "rbf":
+            self.basis = RBFBasis(num_basis, knots_trainable)
+        else:
+            raise ValueError(f"Unknown basis type: {basis}")
+
         self.coeff = nn.Parameter(
             torch.randn(out_features, in_features, num_basis) * 0.1
         )
