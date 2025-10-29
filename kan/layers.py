@@ -25,6 +25,8 @@ class KANLayer(nn.Module):
         # Apply coeffs: sum over in_features and basis
         # (B, F, K) @ (out, F, K) -> (B, out)
         spline_term = torch.einsum("bfk,ofk -> bo", B, self.coeff)
+        
+        return spline_term + self.linear(x) + self.bias
 
 
 if __name__ == "__main__":
