@@ -1,19 +1,43 @@
 [project]
 name = "kolmarn"
 version = "0.1.0"
-description = "Kolmogorov-Arnold Network (KAN) — smooth interpretable neural networks"
+description = "Kolmogorov-Arnold Networks: clean and interpretable neural architectures"
 readme = "README.md"
 requires-python = ">=3.9"
+
 authors = [
-  { name = "Andrew Garcia" }
+    { name = "Andrew Garcia" }
 ]
+
+license = { file = "LICENSE" }
+
 dependencies = [
-  "torch>=2.0.0",
+    "torch>=2.0",
+    "numpy",
+    "matplotlib",
+    "scikit-learn",
 ]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 3 - Alpha",
+    "Framework :: PyTorch",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/andrewrgarcia/kolmarn"
+Source = "https://github.com/andrewrgarcia/kolmarn"
+Issues = "https://github.com/andrewrgarcia/kolmarn/issues"
 
 [project.optional-dependencies]
 dev = ["pytest"]
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
