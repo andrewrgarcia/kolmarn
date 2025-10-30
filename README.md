@@ -75,33 +75,20 @@ Requires: Python ≥ 3.9, PyTorch ≥ 2.0
 
 ## Example Usage
 
-```python
-import torch
-from kolmarn.models import KANSequential
+A minimal end-to-end example that trains and visualizes a Kolmogorov-Arnold Network on `sin(2πx)` is available at:
 
-# Learn sin(2πx)
-x = torch.rand(200, 1)
-y = torch.sin(2 * torch.pi * x)
+[examples/hello_kolmarn.py](./examples/hello_kolmarn.py)
 
-model = KANSequential(
-    in_features=1,
-    layer_sizes=[32, 1],
-    num_basis=16
-)
-
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
-
-for _ in range(1000):
-    pred = model(x)
-    loss = ((pred - y) ** 2).mean()
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-# Visualize learned splines for input 0
-from kolmarn.visualize import plot_feature_splines
-plot_feature_splines(model, feature_index=0)
+```bash
+python examples/hello_kolmarn.py
 ```
+
+This script:
+
+* Generates synthetic data
+* Trains a small KAN to approximate `sin(2πx)`
+* Applies smoothness regularization
+* Visualizes both the fit and layer-wise spline functions
 
 ---
 

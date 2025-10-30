@@ -26,7 +26,10 @@ def plot_feature_splines(model, feature_index=0, layer_index=0, num_points=200):
         N, N, figsize=(3*N, 3*N),
         constrained_layout=True  # clean spacing
     )
-    axs = axs.flatten()
+    if isinstance(axs, plt.Axes):
+        axs = [axs]
+    else:
+        axs = axs.flatten()
 
     knots = layer.basis.knots.detach().cpu().numpy()
 
