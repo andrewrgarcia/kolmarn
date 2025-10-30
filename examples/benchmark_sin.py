@@ -1,8 +1,7 @@
 import numpy as np
-from examples.train_sin import (
+from .train_sin import (
     data_generation,
     train_models,
-    performance_metrics,
 )
 from kolmarn.models import KANSequential
 import torch

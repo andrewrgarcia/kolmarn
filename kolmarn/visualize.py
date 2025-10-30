@@ -66,3 +66,34 @@ def plot_feature_splines(model, feature_index=0, layer_index=0, num_points=200):
         fontsize=15, fontweight="bold"
     )
     plt.show()
+
+
+@torch.no_grad()
+def plot_knots_evolution(model, epoch=None, ax=None, show=True):
+    """
+    Visualize learned knot positions for each adaptive spline layer.
+    Shows how the spline grid adapts during training.
+    """
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(7, 3))
+
+    for i, layer in enumerate(model.modules()):
+        if hasattr(layer, "basis") and hasattr(layer.basis, "compute_knots"):
+            knots = layer.basis.compute_knots().detach().cpu().numpy()
+            y_level = torch.ones_like(torch.tensor(knots)) * i
+            ax.scatter(knots, y_level, label=f"Layer {i}", s=35)
+
+    ax.set_xlabel("Normalized domain [0, 1]")
+    ax.set_ylabel("Layer index")
+    title = "Knot positions"
+    if epoch is not None:
+        title += f" (epoch {epoch})"
+    ax.set_title(title)
+    ax.legend()
+    ax.grid(True, linestyle=":", alpha=0.4)
+
+    if show:
+        plt.tight_layout()
+        plt.show()
+
+    return ax
