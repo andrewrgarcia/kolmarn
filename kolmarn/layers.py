@@ -4,16 +4,16 @@ from kolmarn.spline import BSplineBasis, RBFBasis
 
 
 class KANLayer(nn.Module):
-    """Kolmogorov-Arnold layer with configurable basis type."""
+    """Kolmogorov-Arnold layer with configurable basis type and adaptive knots."""
     def __init__(self, in_features, out_features,
                  num_basis=10, knots_trainable=False,
-                 basis="kan_spline"):
+                 adaptive_knots=False, basis="kan_spline"):
         super().__init__()
 
         if basis == "kan_spline":
-            self.basis = BSplineBasis(num_basis, knots_trainable)
+            self.basis = BSplineBasis(num_basis, knots_trainable, adaptive_knots)
         elif basis == "rbf":
-            self.basis = RBFBasis(num_basis, knots_trainable)
+            self.basis = RBFBasis(num_basis, knots_trainable, adaptive_knots)
         else:
             raise ValueError(f"Unknown basis type: {basis}")
 
@@ -33,8 +33,9 @@ class KANLayer(nn.Module):
 
 
 if __name__ == "__main__":
-    layer = KANLayer(3, 2, num_basis=16, knots_trainable=False)
+    layer = KANLayer(3, 2, num_basis=16, adaptive_knots=True)
     x = torch.rand(5, 3)
     y = layer(x)
     print("Output shape:", y.shape)
+    print("First 5 knots:", layer.basis.compute_knots().detach().numpy()[:5])
     print("Output:", y)
