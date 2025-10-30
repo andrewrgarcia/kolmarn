@@ -141,12 +141,12 @@ To assess implementation performance and numerical stability, we benchmarked **K
 - Function: `sin(2πx)`  
 - Equal parameter counts (`width=[1, 32, 1]`, grid = 16)  
 - Optimizer: Adam, 1000 training steps  
-- 10 independent trials with randomized initialization  
+- 100 independent trials with randomized initialization
 
 | Model | RMSE ↓ | R² ↑ |
 |:--|--:|--:|
-| **Kolmarn (ours)** | **0.0175 ± 0.0002** | **0.9994 ± 0.0000** |
-| PyKAN ([KindXiaoming et al.](https://github.com/KindXiaoming/pykan)) | 0.0327 ± 0.0079 | 0.9977 ± 0.0014 |
+| **Kolmarn (ours)** | **0.0175 ± 0.0000** | **0.9994 ± 0.0000** |
+| PyKAN ([KindXiaoming et al.](https://github.com/KindXiaoming/pykan)) | 0.0300 ± 0.0001 | 0.9982 ± 0.0000 |
 
 Kolmarn demonstrated **lower error and substantially lower variance**, reflecting more stable training dynamics and smoother convergence behavior.  
 The simplified spline formulation avoids gradient pathologies observed in the original grid-based B-spline implementation while maintaining the same expressive capacity.

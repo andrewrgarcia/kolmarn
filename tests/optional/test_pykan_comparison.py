@@ -88,7 +88,7 @@ def test_compare_kolmarn_vs_pykan(num_trials=10):
 
 
 if __name__ == "__main__":
-    num_trials = 10
+    num_trials = 100
     results = [run_single_trial() for _ in range(num_trials)]
     results = np.array(results)
 
