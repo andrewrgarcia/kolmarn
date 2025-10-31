@@ -36,7 +36,15 @@ Issues = "https://github.com/andrewrgarcia/kolmarn/issues"
 
 [project.optional-dependencies]
 dev = ["pytest"]
+symreg = [
+  "pysr>=0.12",
+  "sympy>=1.12",
+]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["kolmarn"]
+

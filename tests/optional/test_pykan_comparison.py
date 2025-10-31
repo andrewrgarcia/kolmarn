@@ -32,7 +32,7 @@ def run_single_trial():
     try:
         from kan import KAN as PyKAN
     except ImportError:
-        print("⚠️ PyKAN not installed; skipping comparison test.")
+        print("WARNING: PyKAN not installed; skipping comparison test.")
         return None
 
     (x, y), (x_test, y_true) = generate_data()
