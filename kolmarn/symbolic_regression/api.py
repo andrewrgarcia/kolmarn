@@ -76,14 +76,27 @@ def run_pysr_regression(
     )
 
 
-def _discover_symbolic_batch(inputs, outputs, meta_fn=None, **kwargs):
+def _discover_symbolic_batch(
+    inputs: np.ndarray,
+    outputs: np.ndarray,
+    *,
+    meta_fn: Optional[Callable[[int], dict]] = None,
+    **sr_kwargs,
+) -> List[SymbolicResult]:
+    """
+    Internal helper to run symbolic regression across multiple output columns.
+
+    Args:
+        inputs: X matrix (n_samples, n_features)
+        outputs: Y matrix (n_samples, n_targets)
+        meta_fn: function j -> metadata kwargs (e.g. out_index)
+        sr_kwargs: forwarded args to run_pysr_regression()
+    """
     results = []
-    for j in range(outputs.shape[1]):
+    n_targets = outputs.shape[1]
+    for j in range(n_targets):
         meta = meta_fn(j) if meta_fn else {}
-        res = run_pysr_regression(
-            inputs, outputs[:, j],
-            **kwargs, **meta
-        )
+        res = run_pysr_regression(inputs, outputs[:, j], **sr_kwargs, **meta)
         results.append(res)
     return results
 
@@ -157,31 +170,34 @@ def discover_symbolic_layer(
     layer = _get_kan_layer(model, layer_index)
     out_features, in_features, K = layer.coeff.shape
 
-    pairs: List[Tuple[int, int]] = [(o, i) for o in range(out_features) for i in range(in_features)]
-
+    pairs = [(o, i) for o in range(out_features) for i in range(in_features)]
     if isinstance(topk_by_coeff_norm, int) and topk_by_coeff_norm > 0:
-        # Rank by coefficient L2 norm
-        norms = []
         with torch.no_grad():
-            c = layer.coeff.detach().cpu()  # (out,in,K)
-            for (o, i) in pairs:
-                norms.append((float(torch.linalg.norm(c[o, i, :])), (o, i)))
+            c = layer.coeff.detach().cpu()
+            norms = [(float(torch.linalg.norm(c[o, i, :])), (o, i)) for (o, i) in pairs]
         norms.sort(key=lambda t: t[0], reverse=True)
         pairs = [pair for _, pair in norms[:topk_by_coeff_norm]]
 
-    results: List[SymbolicResult] = []
+    results = []
     for (o, i) in pairs:
-        res = discover_symbolic_form(
-            model, layer_index, o, i,
+        x, y = _sample_unit_component(
+            layer, o, i,
             n_points=n_points,
             domain=domain,
             component=component,
-            method=method,
+        )
+        res = run_pysr_regression(
+            x, y,
             maxsize=maxsize,
             niterations=niterations,
             timeout_s=timeout_s,
             unary_operators=unary_operators,
             binary_operators=binary_operators,
+            layer_index=layer_index,
+            out_index=o,
+            in_index=i,
+            n_points=n_points,
+            domain=domain,
         )
         results.append(res)
     return results
@@ -202,8 +218,8 @@ def discover_symbolic_global(
     binary_operators=None,
 ):
     """
-    Stage-2 (Option A): run PySR symbolic regression on the *entire model output* f_model(X).
-    Uses shared `run_pysr_regression` to generate SymbolicResult objects for each output dimension.
+    Stage-2 (Option A): run PySR on the full model output f_model(X).
+    Uses `_discover_symbolic_batch` for all output dims.
     """
     if not _HAS_PYSR:
         raise ImportError("PySR not installed. Install with `pip install pysr`.")
@@ -211,31 +227,29 @@ def discover_symbolic_global(
     model.eval()
     device = device or next(model.parameters()).device
 
-    # Infer input dimension robustly
     try:
         in_features = getattr(model[0], "in_features", 1)
     except Exception:
         in_features = 1
 
     # Normalize domain shape
-    if isinstance(X_domain[0], (int, float)):
-        domain = [X_domain for _ in range(in_features)]
-    else:
-        domain = list(X_domain)
+    domain = [X_domain for _ in range(in_features)] if isinstance(X_domain[0], (int, float)) else list(X_domain)
 
-    # Generate random samples within domain
-    X_np = np.zeros((n_samples, in_features), dtype=float)
+    X_np = np.zeros((n_samples, in_features))
     for j, (lo, hi) in enumerate(domain):
         X_np[:, j] = lo + (hi - lo) * np.random.rand(n_samples)
     X = torch.from_numpy(X_np.astype(np.float32)).to(device)
 
     y_np = model(X).detach().cpu().numpy()
-    if y_np.ndim == 1: y_np = y_np[:, None]
+    if y_np.ndim == 1:
+        y_np = y_np[:, None]
 
     return _discover_symbolic_batch(
-        X_np, y_np,
+        X_np,
+        y_np,
         meta_fn=lambda j: {"out_index": j},
-        maxsize=maxsize, niterations=niterations,
+        maxsize=maxsize,
+        niterations=niterations,
         timeout_s=timeout_s,
         unary_operators=unary_operators,
         binary_operators=binary_operators,
