@@ -13,17 +13,65 @@ if _HAS_SYMPY:
 
 @dataclass
 class SymbolicResult:
+    """
+    Container for a single symbolic regression result.
+
+    Attributes
+    ----------
+    layer_index : int
+        Index of the KAN layer from which the relation was extracted.
+    out_index : int
+        Output neuron index within the layer.
+    in_index : int
+        Input neuron index within the layer.
+    expr_sympy : Optional[sympy.Expr]
+        Discovered symbolic expression as a SymPy object, or None if unavailable.
+    expr_str : Optional[str]
+        Stringified version of the discovered expression.
+    r2 : float
+        Coefficient of determination between symbolic prediction and true data.
+    rmse : float
+        Root-mean-square error between symbolic prediction and true data.
+    length : Optional[int]
+        Symbolic expression complexity (operator length), if available.
+    n_points : int
+        Number of data points used during symbolic discovery.
+    x_domain : Tuple[float, float]
+        Sampling domain (xmin, xmax) for the unit.
+    notes : Optional[str]
+        Optional free-form notes or metadata returned by the backend.
+
+    noise_std : Optional[float]
+        Estimated residual noise standard deviation (from `estimate_noise`).
+    pruned_expr : Optional[sympy.Expr]
+        Expression after coefficient simplification (`prune`).
+    expr_stability : Optional[float]
+        0-1 stability score across ensemble runs (`summarize_ensemble`).
+    expr_variants : Optional[list[str]]
+        List of raw expression strings discovered across ensemble runs.
+
+    runtime_s : Optional[float]
+        Wall-clock seconds for symbolic discovery.
+    start_time : Optional[float]
+        Absolute start timestamp, useful for logging/debugging.
+    """
     layer_index: int
     out_index: int
     in_index: int
-    expr_sympy: Optional["sp.Expr"]          # sympy expression or None
-    expr_str: Optional[str]                  # stringified expression
+    expr_sympy: Optional["sp.Expr"] 
+    expr_str: Optional[str]
     r2: float
     rmse: float
-    length: Optional[int]                    # expression length/complexity if available
+    length: Optional[int]
     n_points: int
-    x_domain: Tuple[float, float]            # (xmin, xmax)
+    x_domain: Tuple[float, float]
     notes: Optional[str] = None
+    noise_std: Optional[float] = None
+    pruned_expr: Optional["sp.Expr"] = None
+    expr_stability: Optional[float] = None 
+    expr_variants: Optional[list[str]] = None
+    runtime_s: Optional[float] = None
+    start_time: Optional[float] = None
 
     def to_latex(self) -> str:
         if not _HAS_SYMPY or self.expr_sympy is None:
@@ -60,3 +108,44 @@ class SymbolicResult:
             y = y.to(x.device)
             return y
         return f_torch
+    
+    def estimate_noise(self, X: np.ndarray, y: np.ndarray) -> float:
+        """Compute residual std between data and symbolic prediction."""
+        try:
+            f_np = self.to_callable_numpy()
+            y_hat = f_np(X)
+            self.noise_std = float(np.std(y - y_hat))
+        except Exception:
+            self.noise_std = float("nan")
+        return self.noise_std
+
+    def prune(self, tol: float = 1e-3):
+        """Simplify small coefficients within tolerance."""
+        if not _HAS_SYMPY or self.expr_sympy is None:
+            return self
+        try:
+            self.pruned_expr = sp.nsimplify(self.expr_sympy, tolerance=tol)
+        except Exception:
+            self.pruned_expr = self.expr_sympy
+        return self
+    
+    def summarize_ensemble(self, results: list["SymbolicResult"]) -> "SymbolicResult":
+        """
+        Compute expression stability across ensemble runs.
+        Stability = 1 - (variance in operator composition or coefficient pattern).
+        """
+        if not results:
+            return self
+        exprs = [r.expr_str for r in results if r.expr_str]
+        self.expr_variants = exprs
+
+        # Very simple operator-level stability
+        ops = ["sin", "cos", "exp", "log"]
+        counts = np.array([[e.count(op) for op in ops] for e in exprs])
+        if counts.size == 0:
+            self.expr_stability = 0.0
+        else:
+            # normalized variability
+            var = np.mean(np.std(counts, axis=0) / (np.mean(counts, axis=0) + 1e-6))
+            self.expr_stability = float(max(0.0, 1.0 - var))
+        return self

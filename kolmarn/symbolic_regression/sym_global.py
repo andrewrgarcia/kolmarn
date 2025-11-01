@@ -68,6 +68,9 @@ def discover_symbolic_global(
         timeout_s=config.timeout_s,
         unary_operators=config.unary_operators,
         binary_operators=config.binary_operators,
+        ensemble_runs=getattr(config, "ensemble_runs", 1),
+        ensemble_perturb=getattr(config, "ensemble_perturb", 0.01),
+        tolerance=getattr(config, "tolerance", 1e-3),
     )
 
     return results

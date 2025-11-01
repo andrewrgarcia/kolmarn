@@ -12,7 +12,9 @@ class SymbolicConfig:
     timeout_s: Optional[int] = None
     unary_operators: Optional[List[str]] = None
     binary_operators: Optional[List[str]] = None
-
+    tolerance: float = 1e-3
+    ensemble_runs: int = 1          # number of SR repeats
+    ensemble_perturb: float = 0.01  # data perturbation std
 
 @dataclass
 class GlobalSymbolicConfig(SymbolicConfig):

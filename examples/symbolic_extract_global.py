@@ -31,10 +31,19 @@ if __name__ == "__main__":
         timeout_s=120,
         unary_operators=["sin", "cos", "log", "exp"],
         binary_operators=["+", "-", "*", "/"],
+        ensemble_runs=5,
+        ensemble_perturb=0.02,
+        tolerance=1e-3,
     )
 
     results = discover_symbolic_global(model, config=cfg)
 
     print("\n=== Global Symbolic Regression Results ===")
     for r in results:
-        print(f"R²={r.r2:.4f}  RMSE={r.rmse:.4f}  len={r.length}  f(x)≈ {export_symbolic(r,'string')}")
+        print(
+            f"R_sq={r.r2:.4f}  RMSE={r.rmse:.4f}  "
+            f"std_dev={(r.noise_std or float('nan')):.4f}  "
+            f"stability={(r.expr_stability or float('nan')):.3f}  "
+            f"len={r.length}  time={r.runtime_s:.1f}s"
+        )
+        print("   →", export_symbolic(r, "string"))

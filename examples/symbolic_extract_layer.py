@@ -51,7 +51,7 @@ if __name__ == "__main__":
         eq = export_symbolic(r, "string")
         print(
             f"[L{r.layer_index} o{r.out_index} <- i{r.in_index}] "
-            f"R²={r.r2:.4f} RMSE={r.rmse:.4f} len={r.length or '-'}  f(x)≈ {eq}"
+            f"R_sq={r.r2:.4f} RMSE={r.rmse:.4f} len={r.length or '-'}  f(x)≈ {eq}"
         )
 
     # Example: convert first expression to callable and evaluate

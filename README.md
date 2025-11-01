@@ -113,7 +113,7 @@ Repeated regression experiments on `sin(2πx)` (100 independent trials, equal pa
 | :----- | ---------------: | ---------------: |
 | RMSE   |  0.0167 ± 0.0079 |  0.0185 ± 0.0095 |
 | MAE    |  0.0133 ± 0.0079 |  0.0148 ± 0.0078 |
-| R²     |  0.9993 ± 0.0012 |  0.9991 ± 0.0009 |
+| R_sq   |  0.9993 ± 0.0012 |  0.9991 ± 0.0009 |
 
 Kolmarn matches or exceeds MLP accuracy while exposing its learned structure for direct interpretation.
 
@@ -128,7 +128,7 @@ To assess implementation performance and numerical stability, we benchmarked **K
 * Optimizer: Adam, 1000 training steps
 * 100 independent trials with randomized initialization
 
-| Model                                                                |        RMSE ↓       |         R² ↑        |
+| Model                                                                |        RMSE ↓       |         R_sq ↑        |
 | :------------------------------------------------------------------- | :-----------------: | :-----------------: |
 | **Kolmarn (ours)**                                                   | **0.0175 ± 0.0000** | **0.9994 ± 0.0000** |
 | PyKAN ([KindXiaoming et al.](https://github.com/KindXiaoming/pykan)) |   0.0300 ± 0.0001   |   0.9982 ± 0.0000   |

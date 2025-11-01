@@ -103,7 +103,7 @@ if __name__ == "__main__":
     results = {name: evaluate(model, x_test, y_true) for name, model in zip(names, models)}
 
     print("\n===Performance Comparison===")
-    print(f"{'Model':<16} | {'RMSE':>8} | {'MAE':>8} | {'R²':>8}")
+    print(f"{'Model':<16} | {'RMSE':>8} | {'MAE':>8} | {'R_sq':>8}")
     print("-"*45)
     for name in names:
         m = results[name]

@@ -82,7 +82,7 @@ def test_compare_kolmarn_vs_pykan(num_trials=10):
     print(f"{'Metric':<8} | {'KolmArn Mean ± Std':>25} | {'PyKAN Mean ± Std':>25}")
     print("-" * 65)
     print(f"RMSE    | {rmse_k.mean():.4f} ± {rmse_k.std():.4f} | {rmse_p.mean():.4f} ± {rmse_p.std():.4f}")
-    print(f"R²      | {r2_k.mean():.4f} ± {r2_k.std():.4f} | {r2_p.mean():.4f} ± {r2_p.std():.4f}")
+    print(f"R_sq      | {r2_k.mean():.4f} ± {r2_k.std():.4f} | {r2_p.mean():.4f} ± {r2_p.std():.4f}")
 
     assert r2_k.mean() > 0.99 and r2_p.mean() > 0.99
 
@@ -99,4 +99,4 @@ if __name__ == "__main__":
     print(f"{'Metric':<8} | {'KolmArn Mean ± Std':>25} | {'PyKAN Mean ± Std':>25}")
     print("-" * 65)
     print(f"RMSE    | {rmse_k.mean():.4f} ± {rmse_k.std():.4f} | {rmse_p.mean():.4f} ± {rmse_p.std():.4f}")
-    print(f"R²      | {r2_k.mean():.4f} ± {r2_k.std():.4f} | {r2_p.mean():.4f} ± {r2_p.std():.4f}")
+    print(f"R_sq      | {r2_k.mean():.4f} ± {r2_k.std():.4f} | {r2_p.mean():.4f} ± {r2_p.std():.4f}")

@@ -71,7 +71,7 @@ def run_repeated_trials(num_trials=20):
     print("-" * 60)
     print(f"{'RMSE':<15} {fmt(rmse_kan_list):>20} {fmt(rmse_mlp_list):>20}")
     print(f"{'MAE':<15} {fmt(mae_kan_list):>20} {fmt(mae_mlp_list):>20}")
-    print(f"{'R²':<15} {fmt(r2_kan_list):>20} {fmt(r2_mlp_list):>20}")
+    print(f"{'R_sq':<15} {fmt(r2_kan_list):>20} {fmt(r2_mlp_list):>20}")
 
     # ---- Significance Testing (paired, non-parametric) ----
     stat_rmse, p_rmse = wilcoxon(rmse_kan_list, rmse_mlp_list, alternative="less")
@@ -83,7 +83,7 @@ def run_repeated_trials(num_trials=20):
     print("-" * 40)
     print(f"{'RMSE':<10} {p_rmse:12.4e} {('YES' if p_rmse < 0.05 else 'NO'):>15}")
     print(f"{'MAE':<10} {p_mae:12.4e} {('YES' if p_mae < 0.05 else 'NO'):>15}")
-    print(f"{'R²':<10} {p_r2:12.4e} {('YES' if p_r2 < 0.05 else 'NO'):>15}")
+    print(f"{'R_sq':<10} {p_r2:12.4e} {('YES' if p_r2 < 0.05 else 'NO'):>15}")
 
 
 if __name__ == "__main__":
