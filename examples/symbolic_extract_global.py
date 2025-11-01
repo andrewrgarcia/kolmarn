@@ -25,15 +25,9 @@ if __name__ == "__main__":
 
     cfg = GlobalSymbolicConfig(
         domain=(0.0, 1.0),
-        n_samples=4096,
-        maxsize=12,
-        niterations=3000,
-        timeout_s=120,
         unary_operators=["sin", "cos", "log", "exp"],
         binary_operators=["+", "-", "*", "/"],
-        ensemble_runs=5,
-        ensemble_perturb=0.02,
-        tolerance=1e-3,
+        mode="fast",   # ⚡ switch to "full" for final publication runs
     )
 
     results = discover_symbolic_global(model, config=cfg)
