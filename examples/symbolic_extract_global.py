@@ -2,6 +2,7 @@ import torch
 from kolmarn.models import KANSequential
 from kolmarn.regularizers import spline_smoothness_penalty
 from kolmarn.symbolic_regression import discover_symbolic_global, export_symbolic
+from kolmarn.symbolic_regression.components import GlobalSymbolicConfig
 
 def generate_data(N=200):
     x = torch.rand(N, 1)
@@ -22,8 +23,7 @@ if __name__ == "__main__":
     model = KANSequential(1, [32, 1], num_basis=16, knots_trainable=False)
     model = train(model, x, y)
 
-    results = discover_symbolic_global(
-        model,
+    cfg = GlobalSymbolicConfig(
         domain=(0.0, 1.0),
         n_samples=4096,
         maxsize=12,
@@ -32,6 +32,8 @@ if __name__ == "__main__":
         unary_operators=["sin", "cos", "log", "exp"],
         binary_operators=["+", "-", "*", "/"],
     )
+
+    results = discover_symbolic_global(model, config=cfg)
 
     print("\n=== Global Symbolic Regression Results ===")
     for r in results:
