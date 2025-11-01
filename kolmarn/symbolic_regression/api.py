@@ -208,7 +208,7 @@ def discover_symbolic_layer(
 def discover_symbolic_global(
     model: torch.nn.Module,
     *,
-    X_domain=(0.0, 1.0),
+    domain: Tuple[float, float] | List[Tuple[float, float]] = (0.0, 1.0),
     n_samples: int = 2048,
     device=None,
     maxsize: int = 12,
@@ -219,7 +219,7 @@ def discover_symbolic_global(
 ):
     """
     Stage-2 (Option A): run PySR on the full model output f_model(X).
-    Uses `_discover_symbolic_batch` for all output dims.
+    Produces analytic surrogates for each output dimension.
     """
     if not _HAS_PYSR:
         raise ImportError("PySR not installed. Install with `pip install pysr`.")
@@ -233,24 +233,41 @@ def discover_symbolic_global(
         in_features = 1
 
     # Normalize domain shape
-    domain = [X_domain for _ in range(in_features)] if isinstance(X_domain[0], (int, float)) else list(X_domain)
+    if isinstance(domain[0], (int, float)):
+        domain = [domain for _ in range(in_features)]
+    else:
+        domain = list(domain)
 
     X_np = np.zeros((n_samples, in_features))
     for j, (lo, hi) in enumerate(domain):
         X_np[:, j] = lo + (hi - lo) * np.random.rand(n_samples)
-    X = torch.from_numpy(X_np.astype(np.float32)).to(device)
 
+    # Clip to avoid log(0) or divide-by-zero issues
+    X_np = np.clip(X_np, 1e-6, None)
+
+    X = torch.from_numpy(X_np.astype(np.float32)).to(device)
     y_np = model(X).detach().cpu().numpy()
     if y_np.ndim == 1:
         y_np = y_np[:, None]
 
-    return _discover_symbolic_batch(
+    results = _discover_symbolic_batch(
         X_np,
         y_np,
-        meta_fn=lambda j: {"out_index": j},
+        meta_fn=lambda j: {
+            "layer_index": -1,
+            "out_index": j,
+            "in_index": -1,
+            "n_points": n_samples,
+            "domain": (
+                float(np.min(X_np)),
+                float(np.max(X_np)),
+            ),
+        },
         maxsize=maxsize,
         niterations=niterations,
         timeout_s=timeout_s,
         unary_operators=unary_operators,
         binary_operators=binary_operators,
     )
+
+    return results

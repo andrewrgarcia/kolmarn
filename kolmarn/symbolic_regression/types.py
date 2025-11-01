@@ -33,10 +33,19 @@ class SymbolicResult:
     def to_callable_numpy(self) -> Callable[[np.ndarray], np.ndarray]:
         """Return a numpy-callable f(x)."""
         if not _HAS_SYMPY or self.expr_sympy is None:
-            raise RuntimeError("Symbolic expression not available. Install sympy or run discovery with PySR.")
+            raise RuntimeError("Sympy expression not available.")
 
-        x = sp.Symbol("x")
-        f_np = sp.lambdify(x, self.expr_sympy, modules="numpy")
+        # Normalize variable names
+        expr = self.expr_sympy
+        free_syms = list(expr.free_symbols)
+        if len(free_syms) > 0:
+            x_sym = free_syms[0]
+        else:
+            x_sym = sp.Symbol("x")
+
+        # Force numeric-safe mapping
+        f_np = sp.lambdify(x_sym, expr, modules=["numpy", {"sin": np.sin, "cos": np.cos, "exp": np.exp, "log": np.log}])
+
         return lambda arr: np.asarray(f_np(arr), dtype=float)
 
     def to_callable_torch(self) -> Callable[[torch.Tensor], torch.Tensor]:
