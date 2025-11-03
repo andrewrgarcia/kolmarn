@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import time
 
-from .helpers import _discover_symbolic_batch
+from .helpers import _discover_symbolic_batch, _infer_in_features
 from .components import GlobalSymbolicConfig, _HAS_PYSR, _HAS_SYMPY
 if _HAS_PYSR:
     from pysr import PySRRegressor
@@ -34,13 +34,15 @@ def discover_symbolic_global(
     except Exception:
         in_features = 1
 
+    in_features = _infer_in_features(model)
+
     # Normalize domain shape
     domain = config.domain
     if isinstance(domain[0], (int, float)):
         domain = [domain for _ in range(in_features)]
     else:
         domain = list(domain)
-
+    
     X_np = np.zeros((config.n_samples, in_features))
     for j, (lo, hi) in enumerate(domain):
         X_np[:, j] = lo + (hi - lo) * np.random.rand(config.n_samples)

@@ -1,9 +1,26 @@
 from __future__ import annotations
+import torch
 from typing import Callable, List, Optional
 import numpy as np
 from .components import SymbolicResult, _fit_pysr
 from copy import deepcopy
 import time
+
+def _infer_in_features(model: torch.nn.Module) -> int:
+    """Return the model's input dimension."""
+    # Direct hint from KANSequential
+    if hasattr(model, "input_dim"):
+        return int(model.input_dim)
+
+    # Inspect first sublayer if present
+    if hasattr(model, "layers") and len(model.layers) > 0:
+        first = model.layers[0]
+        if hasattr(first, "linear") and hasattr(first.linear, "in_features"):
+            return int(first.linear.in_features)
+        if hasattr(first, "config") and "in_features" in first.config:
+            return int(first.config["in_features"])
+
+    return 1    # final fallback
 
 
 def run_pysr_regression(

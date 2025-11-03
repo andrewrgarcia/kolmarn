@@ -101,10 +101,8 @@ def _fit_pysr(
         unary_operators = ["sin", "cos", "exp", "log"]
     if binary_operators is None:
         binary_operators = ["+", "-", "*", "/"]
-
-    # Flatten x -> 1D array
-    x1 = x.reshape(-1)
-    X = x1[:, None]  # PySR expects (n_samples, n_features)
+    
+    X = x       # no need to flatten x matrix (if matrix); pySR can handle the dimensions
 
     reg = PySRRegressor(
         niterations=niterations,
