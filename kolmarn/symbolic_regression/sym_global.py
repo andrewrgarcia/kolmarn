@@ -1,6 +1,7 @@
 from __future__ import annotations
 import torch
 import numpy as np
+import time
 
 from .helpers import _discover_symbolic_batch
 from .components import GlobalSymbolicConfig, _HAS_PYSR, _HAS_SYMPY
@@ -22,6 +23,8 @@ def discover_symbolic_global(
     """
     if not _HAS_PYSR:
         raise ImportError("PySR not installed. Install with `pip install pysr`.")
+
+    t0 = time.perf_counter()
 
     model.eval()
     device = config.device or next(model.parameters()).device
@@ -72,5 +75,11 @@ def discover_symbolic_global(
         ensemble_perturb=getattr(config, "ensemble_perturb", 0.01),
         tolerance=getattr(config, "tolerance", 1e-3),
     )
+
+    total_runtime = time.perf_counter() - t0
+
+    # Attach to each result for visibility
+    for r in results:
+        r.total_runtime_s = total_runtime
 
     return results
