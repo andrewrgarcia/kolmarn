@@ -17,7 +17,7 @@ class KANLayer(nn.Module):
     """
     def __init__(self, in_features, out_features,
                  num_basis=10, knots_trainable=False,
-                 adaptive_knots=False, basis="kan_spline"):
+                 adaptive_knots=False, basis="kan_spline", composition="sum"):
         super().__init__()
 
         basis_map = {
@@ -32,6 +32,7 @@ class KANLayer(nn.Module):
             knots_trainable=knots_trainable,
             adaptive_knots=adaptive_knots
         )
+        self.composition = composition 
 
         self.coeff = nn.Parameter(
             torch.randn(out_features, in_features, num_basis) * 0.1
@@ -53,12 +54,18 @@ class KANLayer(nn.Module):
         # Apply coeffs: sum over in_features and basis
         # (B, F, K) @ (out, F, K) -> (B, out)
         spline_term = torch.einsum("bfk,ofk->bo", B, self.coeff)
+        lin = self.linear(x) + self.bias
 
-        return spline_term + self.linear(x) + self.bias
+        if self.composition == "sum":
+            return spline_term + lin
+        elif self.composition == "prod":
+            return spline_term * lin
+        else:
+            raise ValueError(f"Unknown composition: {self.composition}")
 
 
 if __name__ == "__main__":
-    layer = KANLayer(3, 2, num_basis=16, adaptive_knots=True)
+    layer = KANLayer(3, 2, num_basis=16, adaptive_knots=True, composition="prod")
     x = torch.rand(5, 3)
     y = layer(x)
     print("Output shape:", y.shape)
